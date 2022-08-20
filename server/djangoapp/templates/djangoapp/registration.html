@@ -6,6 +6,51 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
     <body>
-    <!--Add a registration form here -->
+        <nav class="navbar navbar-expand navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Dealership Review</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarDealershipContent" aria-controls="navbarDealershipContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarDealershipContent">
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
+                  </li>
+                </ul>   
+            </div>
+        </nav>
+
+
+        <form class="form-group" action="{% url 'djangoapp:signup' %}" method="POST">
+            {% csrf_token %}
+            <h1>
+                Sign Up
+            </h1>
+            <div class="form-group">
+                <label for="Username">Username</label>
+                <input class="form-control" name="Username" placeholder="Enter Username:">
+            </div>
+            <div class="form-group">
+                <label for="firstname">First Name</label>
+                <input class="form-control" name="firstname" placeholder="Enter First Name:">
+            </div>
+            <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <input class="form-control" name="lastname" placeholder="Enter Last Name:">
+            </div>
+            <div class="form-group">
+                <label for="Password">Password</label>
+                <input class="form-control" name="Password" placeholder="Enter Password:" type="password">
+            </div>
+            {%if message %}
+            <div class="alert alert-warning">
+                {{message}}
+            </div>
+            {%endif%}
+            <button class="btn btn-primary" type="submit">Sign up</button>
+        </form>
     </body>
 </html>
