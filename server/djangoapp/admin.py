@@ -6,11 +6,12 @@ from .models import CarMake, CarModel
 
 # CarModelInline class
 class CarModelInline(admin.StackedInline):
-    model = CarModel 
+    model = CarModel
+    extra = 0 
 
 # CarModelAdmin class
 class CarModelAdmin(admin.ModelAdmin):
-    fields = ['car_name', 'car_make', 'dealerId', 'car_type', 'car_year']
+    fields = ['dealerId', 'car_type', 'car_year']
 
 # CarMakeAdmin class with CarModelInline
 class CarMakeAdmin(admin.ModelAdmin):
