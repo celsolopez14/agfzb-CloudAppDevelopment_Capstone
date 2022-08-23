@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
-# from .restapis import related methods
+from .restapis import get_dealers_from_cf, get_dealers_by_state_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -91,14 +91,55 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
-        return render(request, 'djangoapp/index.html', context)
-
-
+        url = "https://c9f5dd50.us-east.apigw.appdomain.cloud/api/dealership"
+        dealerships = get_dealers_from_cf(url)
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        return HttpResponse(dealer_names)
+    
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    context = {}
+    if request.method == "GET":
+        url = "https://c9f5dd50.us-east.apigw.appdomain.cloud/api/review"
+        reviews = get_dealer_reviews_from_cf(url, dealerId = dealer_id)
+        review_comment = ' '.join([rev.review +'[' + rev.sentiment + ']' for rev in reviews])
+    return HttpResponse(review_comment)
+        
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    context = {}
+    request.method = "POST"
+    if request.method == 'POST':
+        #username = request.POST['Username']
+        #password = request.POST['Password']
+        user = authenticate(username="celopez", password="Vetnocel013")
+
+        if user is not None:
+            review = dict()
+            review["time"] = datetime.utcnow().isoformat()
+            review["dealership"] = dealer_id
+            review["review"] = "This is a comment testing the view for add_review."
+            review["id"] = 0
+            review["name"] = "Peter"
+            review["purchase"] = "false"
+            review["purchase_date"] = "06/10/2022"
+            review["car_make"] = "Ferrari"
+            review["car_model"] = "296 GTB"
+            review["car_year"] = "2022"
+
+            json_payload = dict()
+            json_payload["review"] = review
+            print(json_payload)
+            response = post_request("https://c9f5dd50.us-east.apigw.appdomain.cloud/api/review", json_payload,
+            dealerId = dealer_id)
+            
+            return HttpResponse(response)
+        else:
+            context['message'] = 'Must be logged in to make a review.'
+            return render(request, 'djangoapp/registration.html', context)
+
+    return render(request, 'djangoapp/registration.html', context)
+
 
