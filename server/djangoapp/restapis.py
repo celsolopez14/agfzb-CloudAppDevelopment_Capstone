@@ -5,8 +5,8 @@ from requests.auth import HTTPBasicAuth
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions
-import os
-from dotenv import load_dotenv
+#import os
+#from dotenv import load_dotenv
 
 
 # Create a `get_request` to make HTTP GET requests
@@ -116,9 +116,11 @@ def get_dealer_reviews_from_cf(url, **kwargs):
 # - Get the returned sentiment label such as Positive or Negative
 def analyze_review_sentiments(dealer_review): 
 
-    load_dotenv()
-    api_key = os.getenv('WATSON_API_KEY')
-    url = os.getenv("URL_WATSON")
+    #load_dotenv()
+    #api_key = os.getenv('WATSON_API_KEY')
+    #url = os.getenv("URL_WATSON")
+    url = "https://api.us-east.natural-language-understanding.watson.cloud.ibm.com/instances/c3e54c58-3256-44b7-b8bb-c676589df47c"
+    api_key = "876IJZI8sC9b5-Ypig0jDsTLK88AuiLN31ntLdsc7d2U"
 
     authenticator = IAMAuthenticator(api_key) 
     natural_language_understanding = NaturalLanguageUnderstandingV1(version='2022-04-07',
