@@ -76,7 +76,18 @@ def get_dealers_from_cf(url, **kwargs):
     return results
 
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
-# def get_dealer_by_id_from_cf(url, dealerId):
+def get_dealer_by_id_from_cf(url, dealerId):
+    json_result = get_request(url)
+    if json_result:
+        dealers = json_result["dealerships"]
+        for dealer in dealers:
+            if dealer["id"] == dealerId:
+                dealer_obj = CarDealer(address = dealer["address"], city = dealer["city"], 
+                full_name = dealer["full_name"], id = dealer["id"], lat = dealer["lat"], 
+                long = dealer["long"], short_name = dealer["short_name"], st = dealer["st"], zip = dealer["zip"]) 
+
+    return dealer_obj
+
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
 def get_dealers_by_state_from_cf(url, **kwargs):
@@ -98,14 +109,18 @@ def get_dealer_reviews_from_cf(url, **kwargs):
     if "dealerId" in kwargs:
         json_result = get_request(url, **kwargs)
     if json_result:
-        reviews = json_result["reviews"]
-        for review in reviews:
-            review_obj = DealerReview(dealership = review["dealership"], name = review["name"],
-            purchase = review["purchase"], id = review["id"], review = review["review"],
-            purchase_date = review["purchase_date"], car_make = review["car_make"], 
-            car_model = review["car_model"], car_year = review["car_year"], sentiment = '')
-            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
-            results.append(review_obj)
+        try:
+            reviews = json_result["reviews"]
+            for review in reviews:
+                review_obj = DealerReview(dealership = review["dealership"], name = review["name"],
+                purchase = review["purchase"], id = review["id"], review = review["review"],
+                purchase_date = review["purchase_date"], car_make = review["car_make"], 
+                car_model = review["car_model"], car_year = review["car_year"], sentiment = '')
+                review_obj.sentiment = analyze_review_sentiments(review_obj.review)
+                results.append(review_obj)
+        except:
+            results.append(json_result)
+        
     return results
         
 
